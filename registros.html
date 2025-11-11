@@ -477,7 +477,9 @@
       </div>
     </div>
 
-   
+    <div class="footer">
+      <p>Painel de Agendamentos - D'AMOLADOR &copy; 2023</p>
+    </div>
   </div>
 
   <script>
@@ -581,13 +583,20 @@
       }
     }
 
-    // Atualizar estatísticas
+    // Atualizar estatísticas - CORRIGIDA
     function atualizarEstatisticas() {
       const hoje = getTodayManaus();
       const seteDias = getNext7DaysManaus();
       
+      // Agendamentos de HOJE (apenas hoje)
       const agendamentosHoje = allAgendamentos.filter(a => a.data === hoje && a.nome !== "Folga").length;
-      const proximosAgendamentos = allAgendamentos.filter(a => a.data >= seteDias.startDate && a.data <= seteDias.endDate && a.nome !== "Folga").length;
+      
+      // Agendamentos dos PRÓXIMOS 7 DIAS (excluindo hoje)
+      const proximosAgendamentos = allAgendamentos.filter(a => 
+        a.data > hoje &&  // MAIOR que hoje, não maior ou igual
+        a.data <= seteDias.endDate && 
+        a.nome !== "Folga"
+      ).length;
       
       document.getElementById('totalAgendamentos').textContent = allAgendamentos.filter(a => a.nome !== "Folga").length;
       document.getElementById('agendamentosHoje').textContent = agendamentosHoje;
@@ -604,7 +613,11 @@
         agendamentosFiltrados = agendamentosFiltrados.filter(a => a.data === hoje);
       } else if (currentDateFilter === 'next7days') {
         const seteDias = getNext7DaysManaus();
-        agendamentosFiltrados = agendamentosFiltrados.filter(a => a.data >= seteDias.startDate && a.data <= seteDias.endDate);
+        // Para o filtro de visualização, inclui hoje + próximos 7 dias
+        agendamentosFiltrados = agendamentosFiltrados.filter(a => 
+          a.data >= seteDias.startDate && 
+          a.data <= seteDias.endDate
+        );
       }
       
       // Aplicar ordenação alfabética
